@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: data-update-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/china_cultural_tourism?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: data-update-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# 定时任务配置
+schedule:
+  static-data:
+    cron: "0 0 0 * * ?" # 每天凌晨0点执行
+  weather-data:
+    cron: "0 */30 * * * ?" # 每30分钟执行一次
