@@ -1,32 +1,28 @@
 {
-  "name": "frontend",
+  "name": "chinese-tourism-globe",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "中国文旅地球仪大屏展示系统",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.0",
-    "@types/three": "^0.183.1",
-    "axios": "^1.15.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "three": "^0.183.2"
+    "@react-three/drei": "^9.88.13",
+    "@react-three/fiber": "^8.15.12",
+    "axios": "^1.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
+    "three": "^0.160.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^9.39.4",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.4.0",
-    "vite": "^8.0.4"
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
   }
 }

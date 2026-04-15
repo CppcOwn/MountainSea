@@ -1,0 +1,166 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* 响应式设计 */
+@media (min-width: 750px) {
+  .container {
+    max-width: 750px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 414px) {
+  .content {
+    flex: 1;
+  }
+  
+  .wonder-image {
+    height: 180px;
+  }
+  
+  .info-section {
+    padding: 12px;
+  }
+  
+  .info-title {
+    font-size: 15px;
+  }
+  
+  .info-text {
+    font-size: 13px;
+  }
+  
+  .scenic-section {
+    padding: 12px;
+  }
+  
+  .section-title {
+    font-size: 15px;
+  }
+  
+  .scenic-image {
+    height: 110px;
+  }
+  
+  .scenic-name {
+    font-size: 14px;
+  }
+  
+  .scenic-description {
+    font-size: 13px;
+  }
+}
+
+.header {
+  height: 44px;
+  background-color: #1890ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  position: relative;
+}
+
+.back-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-text {
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: bold;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.header-right {
+  width: 44px;
+}
+
+.content {
+  flex: 1;
+}
+
+.wonder-image {
+  width: 100%;
+  height: 200px;
+}
+
+.info-section {
+  background-color: white;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.info-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.info-text {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.scenic-section {
+  background-color: white;
+  padding: 16px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.scenic-item {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.scenic-image {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.scenic-name {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.scenic-rating {
+  font-size: 13px;
+  color: #ff9500;
+  margin-bottom: 8px;
+}
+
+.scenic-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}

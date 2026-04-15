@@ -29,10 +29,25 @@ public class ScenicSpotService {
             return scenicSpots;
         }
         
-        // 从数据库获取
-        scenicSpots = scenicSpotRepository.findAll();
+        // 从数据库获取，包含详细信息
+        scenicSpots = scenicSpotRepository.findAllWithDetails();
         // 缓存结果，设置过期时间为1小时
         redisTemplate.opsForValue().set(SCENIC_SPOTS_LIST_KEY, scenicSpots, 1, TimeUnit.HOURS);
+        return scenicSpots;
+    }
+    
+    public List<ScenicSpot> getAllScenicSpots(int page, int size) {
+        // 尝试从缓存获取
+        String cacheKey = SCENIC_SPOTS_LIST_KEY + "_" + page + "_" + size;
+        List<ScenicSpot> scenicSpots = (List<ScenicSpot>) redisTemplate.opsForValue().get(cacheKey);
+        if (scenicSpots != null) {
+            return scenicSpots;
+        }
+        
+        // 从数据库获取，包含详细信息，支持分页
+        scenicSpots = scenicSpotRepository.findAllWithDetails(page, size);
+        // 缓存结果，设置过期时间为1小时
+        redisTemplate.opsForValue().set(cacheKey, scenicSpots, 1, TimeUnit.HOURS);
         return scenicSpots;
     }
     
@@ -44,13 +59,14 @@ public class ScenicSpotService {
             return Optional.of(scenicSpot);
         }
         
-        // 从数据库获取
-        Optional<ScenicSpot> optionalScenicSpot = scenicSpotRepository.findById(id);
-        optionalScenicSpot.ifPresent(spot -> {
+        // 从数据库获取，包含详细信息
+        ScenicSpot spot = scenicSpotRepository.findByIdWithDetails(id);
+        if (spot != null) {
             // 缓存结果，设置过期时间为2小时
             redisTemplate.opsForValue().set(key, spot, 2, TimeUnit.HOURS);
-        });
-        return optionalScenicSpot;
+            return Optional.of(spot);
+        }
+        return Optional.empty();
     }
     
     public List<ScenicSpot> getScenicSpotsByLevel(String level) {

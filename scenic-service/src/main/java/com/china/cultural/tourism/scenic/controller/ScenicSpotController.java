@@ -16,8 +16,10 @@ public class ScenicSpotController {
     private ScenicSpotService scenicSpotService;
     
     @GetMapping
-    public ResponseEntity<List<ScenicSpot>> getAllScenicSpots() {
-        List<ScenicSpot> scenicSpots = scenicSpotService.getAllScenicSpots();
+    public ResponseEntity<List<ScenicSpot>> getAllScenicSpots(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<ScenicSpot> scenicSpots = scenicSpotService.getAllScenicSpots(page, size);
         return new ResponseEntity<>(scenicSpots, HttpStatus.OK);
     }
     
