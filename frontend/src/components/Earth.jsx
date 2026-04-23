@@ -8,6 +8,7 @@ import { cacheRequest, cacheSessionRequest } from '../utils/cache';
 import { printPerformanceMetrics } from '../utils/performanceMonitor';
 import { fetchWithRetry, handleError, isOnline, listenNetworkStatus } from '../utils/errorHandler';
 import LazyImage from './LazyImage';
+import PointCloudMap from './PointCloudMap';
 
 const Earth = ({ isMobile, isTablet, isDesktop }) => {
   const [scenicSpots, setScenicSpots] = useState([]);
@@ -1154,6 +1155,7 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
   const [scenicSpots, setScenicSpots] = React.useState([]);
   const [selectedSpot, setSelectedSpot] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [mapMode, setMapMode] = React.useState('2d'); // '3d', '2d', 'point-cloud'
 
   // 加载模拟数据
   React.useEffect(() => {
@@ -1358,24 +1360,109 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
     );
   }
 
-  if (!webGLSupported) {
-    return <Map2D 
-      scenicSpots={scenicSpots} 
-      selectedSpot={selectedSpot} 
-      setSelectedSpot={setSelectedSpot} 
-      isMobile={isMobile} 
-      isTablet={isTablet} 
-      isDesktop={isDesktop} 
-    />;
-  }
-
-  return (
-    <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(to bottom, #000033, #000000)' }}>
-      <Canvas camera={{ position: [0, 0, isMobile ? 15 : 12] }}>
-        <Earth isMobile={isMobile} isTablet={isTablet} isDesktop={isDesktop} />
-      </Canvas>
+  // 地图模式切换控制
+  const renderMapModeControl = () => (
+    <div style={{
+      position: 'absolute',
+      top: isMobile ? '50px' : '80px',
+      left: isMobile ? '10px' : '20px',
+      background: 'rgba(0, 0, 0, 0.8)',
+      border: '1px solid #00ffff',
+      borderRadius: '10px',
+      padding: isMobile ? '8px' : '12px',
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      gap: isMobile ? '8px' : '12px',
+      zIndex: 10
+    }}>
+      <button
+        onClick={() => setMapMode('2d')}
+        style={{
+          padding: isMobile ? '6px 12px' : '8px 16px',
+          background: mapMode === '2d' ? '#00ffff' : 'rgba(0, 255, 255, 0.2)',
+          color: mapMode === '2d' ? '#000' : '#fff',
+          border: '1px solid #00ffff',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: isMobile ? '12px' : '14px',
+          fontWeight: mapMode === '2d' ? 'bold' : 'normal'
+        }}
+      >
+        2D地图
+      </button>
+      {webGLSupported && (
+        <button
+          onClick={() => setMapMode('3d')}
+          style={{
+            padding: isMobile ? '6px 12px' : '8px 16px',
+            background: mapMode === '3d' ? '#00ffff' : 'rgba(0, 255, 255, 0.2)',
+            color: mapMode === '3d' ? '#000' : '#fff',
+            border: '1px solid #00ffff',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: isMobile ? '12px' : '14px',
+            fontWeight: mapMode === '3d' ? 'bold' : 'normal'
+          }}
+        >
+          3D地球仪
+        </button>
+      )}
+      <button
+        onClick={() => setMapMode('point-cloud')}
+        style={{
+          padding: isMobile ? '6px 12px' : '8px 16px',
+          background: mapMode === 'point-cloud' ? '#00ffff' : 'rgba(0, 255, 255, 0.2)',
+          color: mapMode === 'point-cloud' ? '#000' : '#fff',
+          border: '1px solid #00ffff',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: isMobile ? '12px' : '14px',
+          fontWeight: mapMode === 'point-cloud' ? 'bold' : 'normal'
+        }}
+      >
+        点云地图
+      </button>
     </div>
   );
+
+  // 根据选择的地图模式渲染不同的地图
+  if (mapMode === 'point-cloud') {
+    return (
+      <div style={{ position: 'relative' }}>
+        {renderMapModeControl()}
+        <PointCloudMap 
+          scenicSpots={scenicSpots} 
+          isMobile={isMobile} 
+          isTablet={isTablet} 
+          isDesktop={isDesktop} 
+        />
+      </div>
+    );
+  } else if (mapMode === '3d' && webGLSupported) {
+    return (
+      <div style={{ position: 'relative', width: '100vw', height: '100vh', background: 'linear-gradient(to bottom, #000033, #000000)' }}>
+        {renderMapModeControl()}
+        <Canvas camera={{ position: [0, 0, isMobile ? 15 : 12] }}>
+          <Earth isMobile={isMobile} isTablet={isTablet} isDesktop={isDesktop} />
+        </Canvas>
+      </div>
+    );
+  } else {
+    // 默认显示2D地图
+    return (
+      <div style={{ position: 'relative' }}>
+        {renderMapModeControl()}
+        <Map2D 
+          scenicSpots={scenicSpots} 
+          selectedSpot={selectedSpot} 
+          setSelectedSpot={setSelectedSpot} 
+          isMobile={isMobile} 
+          isTablet={isTablet} 
+          isDesktop={isDesktop} 
+        />
+      </div>
+    );
+  }
 };
 
 export default EarthContainer;
