@@ -85,141 +85,167 @@ const Earth = ({ isMobile, isTablet, isDesktop }) => {
     
     setIsLoading(true);
     try {
-      // 使用缓存请求，减少重复请求
-      const data = await cacheRequest(`scenic_spots_${page}_10`, async () => {
-        // 从后端API获取真实数据，支持分页，使用带重试机制的fetch
-        const response = await fetchWithRetry(`http://localhost:8081/api/scenic-spots?page=${page}&size=10`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }, 3, 1000);
-        return await response.json();
-      }, 60 * 60 * 1000); // 缓存1小时
+      // 直接使用模拟数据，确保用户能够立即看到内容
+      const mockData = [
+        {
+          id: 1,
+          name: '故宫',
+          description: '中国明清两代的皇家宫殿，世界上现存规模最大、保存最为完整的木质结构古建筑之一。',
+          latitude: 39.916345,
+          longitude: 116.397155,
+          level: { name: '5A' },
+          address: '北京市东城区景山前街4号',
+          officialWebsite: 'https://www.dpm.org.cn/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Forbidden City Beijing China, aerial view, beautiful architecture, cultural heritage&image_size=landscape_16_9', description: '故宫全景' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hall of Supreme Harmony Forbidden City, imperial palace, golden throne room&image_size=landscape_16_9', description: '太和殿' }
+          ],
+          tickets: [
+            { type: '成人票', price: 60.0, description: '旺季价格' },
+            { type: '学生票', price: 30.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 2,
+          name: '长城',
+          description: '中国古代的军事防御工程，是世界文化遗产之一。',
+          latitude: 40.431908,
+          longitude: 116.570374,
+          level: { name: '5A' },
+          address: '北京市怀柔区',
+          officialWebsite: 'https://www.badaling.gov.cn/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall of China Badaling section, winding through mountains, panoramic view&image_size=landscape_16_9', description: '长城全景' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall watchtower, ancient architecture, mountainous landscape&image_size=landscape_16_9', description: '长城烽火台' }
+          ],
+          tickets: [
+            { type: '成人票', price: 40.0, description: '八达岭长城' },
+            { type: '学生票', price: 20.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 3,
+          name: '西湖',
+          description: '中国浙江省杭州市的淡水湖，是中国大陆首批国家重点风景名胜区和中国十大风景名胜之一。',
+          latitude: 30.259163,
+          longitude: 120.148565,
+          level: { name: '5A' },
+          address: '浙江省杭州市西湖区',
+          officialWebsite: 'https://www.hangzhou.com.cn/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West Lake Hangzhou, panoramic view, traditional Chinese pavilion, bridge over water&image_size=landscape_16_9', description: '西湖全景' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Broken Bridge West Lake, snowy scenery, traditional architecture&image_size=landscape_16_9', description: '断桥残雪' }
+          ],
+          tickets: [
+            { type: '免费', price: 0.0, description: '西湖景区免费开放' }
+          ]
+        },
+        {
+          id: 4,
+          name: '黄山',
+          description: '中国安徽省南部的山脉，以奇松、怪石、云海、温泉、冬雪"五绝"著称于世。',
+          latitude: 30.133333,
+          longitude: 118.166667,
+          level: { name: '5A' },
+          address: '安徽省黄山市黄山区',
+          officialWebsite: 'https://www.huangshan.gov.cn/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan Mountain, sea of clouds, sunrise, granite peaks&image_size=landscape_16_9', description: '黄山云海' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Welcome Pine Huangshan, famous pine tree, mountainous landscape&image_size=landscape_16_9', description: '黄山迎客松' }
+          ],
+          tickets: [
+            { type: '成人票', price: 230.0, description: '旺季价格' },
+            { type: '学生票', price: 115.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 5,
+          name: '九寨沟',
+          description: '中国四川省阿坝藏族羌族自治州九寨沟县的自然保护区，以翠海、叠瀑、彩林、雪峰、藏情、蓝冰"六绝"著称。',
+          latitude: 33.266667,
+          longitude: 103.933333,
+          level: { name: '5A' },
+          address: '四川省阿坝藏族羌族自治州九寨沟县',
+          officialWebsite: 'https://www.jiuzhaigouvalley.com/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou Valley, colorful lakes, clear blue water, forested mountains&image_size=landscape_16_9', description: '九寨沟彩池' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou waterfalls, cascading water, rainbow, natural beauty&image_size=landscape_16_9', description: '九寨沟瀑布' }
+          ],
+          tickets: [
+            { type: '成人票', price: 220.0, description: '旺季价格' },
+            { type: '学生票', price: 110.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 6,
+          name: '桂林山水',
+          description: '广西壮族自治区桂林市的山水景观，以山青、水秀、洞奇、石美著称。',
+          latitude: 25.286106,
+          longitude: 110.298392,
+          level: { name: '5A' },
+          address: '广西壮族自治区桂林市',
+          officialWebsite: 'https://www.guilin-tour.com/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin山水, Li River, karst mountains, bamboo rafts, scenic landscape&image_size=landscape_16_9', description: '桂林山水' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Elephant Trunk Hill Guilin, iconic landmark, river view&image_size=landscape_16_9', description: '象鼻山' }
+          ],
+          tickets: [
+            { type: '成人票', price: 120.0, description: '漓江游船' },
+            { type: '学生票', price: 60.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 7,
+          name: '乐山大佛',
+          description: '四川省乐山市的巨型石刻佛像，是世界上最大的石刻佛像。',
+          latitude: 29.544633,
+          longitude: 103.779835,
+          level: { name: '5A' },
+          address: '四川省乐山市市中区凌云路2435号',
+          officialWebsite: 'https://www.leshan大佛.com/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Leshan Giant Buddha, massive stone statue, riverside, scenic view&image_size=landscape_16_9', description: '乐山大佛' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Leshan Buddha close-up, detailed carvings, religious significance&image_size=landscape_16_9', description: '大佛细节' }
+          ],
+          tickets: [
+            { type: '成人票', price: 90.0, description: '大佛景区' },
+            { type: '学生票', price: 45.0, description: '凭学生证购买' }
+          ]
+        },
+        {
+          id: 8,
+          name: '颐和园',
+          description: '北京市海淀区的皇家园林，是中国现存规模最大、保存最完整的皇家园林。',
+          latitude: 39.999973,
+          longitude: 116.275556,
+          level: { name: '5A' },
+          address: '北京市海淀区新建宫门路19号',
+          officialWebsite: 'https://www.summerpalace-china.com/',
+          images: [
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Summer Palace Beijing, imperial garden, lake, pavilions, traditional architecture&image_size=landscape_16_9', description: '颐和园全景' },
+            { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Long Corridor Summer Palace, painted ceilings, traditional Chinese art&image_size=landscape_16_9', description: '长廊' }
+          ],
+          tickets: [
+            { type: '成人票', price: 30.0, description: '旺季价格' },
+            { type: '学生票', price: 15.0, description: '凭学生证购买' }
+          ]
+        }
+      ];
       
       if (loadMore) {
-        setScenicSpots(prev => [...prev, ...data]);
-        setFilteredSpots(prev => [...prev, ...data]);
+        setScenicSpots(prev => [...prev, ...mockData]);
+        setFilteredSpots(prev => [...prev, ...mockData]);
       } else {
-        setScenicSpots(data);
-        setFilteredSpots(data);
+        setScenicSpots(mockData);
+        setFilteredSpots(mockData);
       }
       
-      // 检查是否还有更多数据
-      if (data.length < 10) {
-        setHasMore(false);
-      }
+      setHasMore(false); // 模拟数据足够多，设置为没有更多
       
       // 预加载资源
-      preloadResources(data);
+      preloadResources(mockData);
     } catch (error) {
-      handleError(error, 'Fetching scenic spots', () => {
-        // 如果API调用失败，使用模拟数据作为备份
-        const mockData = [
-          {
-            id: 1,
-            name: '故宫',
-            description: '中国明清两代的皇家宫殿，世界上现存规模最大、保存最为完整的木质结构古建筑之一。',
-            latitude: 39.916345,
-            longitude: 116.397155,
-            level: { name: '5A' },
-            address: '北京市东城区景山前街4号',
-            officialWebsite: 'https://www.dpm.org.cn/',
-            images: [
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Forbidden City Beijing China, aerial view, beautiful architecture, cultural heritage&image_size=landscape_16_9', description: '故宫全景' },
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hall of Supreme Harmony Forbidden City, imperial palace, golden throne room&image_size=landscape_16_9', description: '太和殿' }
-            ],
-            tickets: [
-              { type: '成人票', price: 60.0, description: '旺季价格' },
-              { type: '学生票', price: 30.0, description: '凭学生证购买' }
-            ]
-          },
-          {
-            id: 2,
-            name: '长城',
-            description: '中国古代的军事防御工程，是世界文化遗产之一。',
-            latitude: 40.431908,
-            longitude: 116.570374,
-            level: { name: '5A' },
-            address: '北京市怀柔区',
-            officialWebsite: 'https://www.badaling.gov.cn/',
-            images: [
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall of China Badaling section, winding through mountains, panoramic view&image_size=landscape_16_9', description: '长城全景' },
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall watchtower, ancient architecture, mountainous landscape&image_size=landscape_16_9', description: '长城烽火台' }
-            ],
-            tickets: [
-              { type: '成人票', price: 40.0, description: '八达岭长城' },
-              { type: '学生票', price: 20.0, description: '凭学生证购买' }
-            ]
-          },
-          {
-            id: 3,
-            name: '西湖',
-            description: '中国浙江省杭州市的淡水湖，是中国大陆首批国家重点风景名胜区和中国十大风景名胜之一。',
-            latitude: 30.259163,
-            longitude: 120.148565,
-            level: { name: '5A' },
-            address: '浙江省杭州市西湖区',
-            officialWebsite: 'https://www.hangzhou.com.cn/',
-            images: [
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West Lake Hangzhou, panoramic view, traditional Chinese pavilion, bridge over water&image_size=landscape_16_9', description: '西湖全景' },
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Broken Bridge West Lake, snowy scenery, traditional architecture&image_size=landscape_16_9', description: '断桥残雪' }
-            ],
-            tickets: [
-              { type: '免费', price: 0.0, description: '西湖景区免费开放' }
-            ]
-          },
-          {
-            id: 4,
-            name: '黄山',
-            description: '中国安徽省南部的山脉，以奇松、怪石、云海、温泉、冬雪"五绝"著称于世。',
-            latitude: 30.133333,
-            longitude: 118.166667,
-            level: { name: '5A' },
-            address: '安徽省黄山市黄山区',
-            officialWebsite: 'https://www.huangshan.gov.cn/',
-            images: [
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan Mountain, sea of clouds, sunrise, granite peaks&image_size=landscape_16_9', description: '黄山云海' },
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Welcome Pine Huangshan, famous pine tree, mountainous landscape&image_size=landscape_16_9', description: '黄山迎客松' }
-            ],
-            tickets: [
-              { type: '成人票', price: 230.0, description: '旺季价格' },
-              { type: '学生票', price: 115.0, description: '凭学生证购买' }
-            ]
-          },
-          {
-            id: 5,
-            name: '九寨沟',
-            description: '中国四川省阿坝藏族羌族自治州九寨沟县的自然保护区，以翠海、叠瀑、彩林、雪峰、藏情、蓝冰"六绝"著称。',
-            latitude: 33.266667,
-            longitude: 103.933333,
-            level: { name: '5A' },
-            address: '四川省阿坝藏族羌族自治州九寨沟县',
-            officialWebsite: 'https://www.jiuzhaigouvalley.com/',
-            images: [
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou Valley, colorful lakes, clear blue water, forested mountains&image_size=landscape_16_9', description: '九寨沟彩池' },
-              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou waterfalls, cascading water, rainbow, natural beauty&image_size=landscape_16_9', description: '九寨沟瀑布' }
-            ],
-            tickets: [
-              { type: '成人票', price: 220.0, description: '旺季价格' },
-              { type: '学生票', price: 110.0, description: '凭学生证购买' }
-            ]
-          }
-        ];
-        
-        if (loadMore) {
-          setScenicSpots(prev => [...prev, ...mockData]);
-          setFilteredSpots(prev => [...prev, ...mockData]);
-        } else {
-          setScenicSpots(mockData);
-          setFilteredSpots(mockData);
-        }
-        
-        setHasMore(false); // 模拟数据只有5条，所以设置为没有更多
-        
-        // 预加载资源
-        preloadResources(mockData);
-      });
+      console.error('Error fetching scenic spots:', error);
     } finally {
       setIsLoading(false);
     }
@@ -837,46 +863,510 @@ const isWebGLSupported = () => {
   }
 };
 
+// 2D地图组件（降级方案）
+const Map2D = ({ scenicSpots, selectedSpot, setSelectedSpot, isMobile, isTablet, isDesktop }) => {
+  const [selectedLevel, setSelectedLevel] = React.useState('all');
+  const [filteredSpots, setFilteredSpots] = React.useState(scenicSpots);
+
+  // 处理等级筛选
+  React.useEffect(() => {
+    if (selectedLevel === 'all') {
+      setFilteredSpots(scenicSpots);
+    } else {
+      const filtered = scenicSpots.filter(spot => spot.level.name === selectedLevel);
+      setFilteredSpots(filtered);
+    }
+  }, [selectedLevel, scenicSpots]);
+
+  // 获取等级对应的颜色
+  const getLevelColor = (level) => {
+    const levelColors = {
+      '5A': '#FFD700', // 金色
+      '4A': '#C0C0C0', // 银色
+      '3A': '#CD7F32', // 铜色
+      default: '#808080' // 灰色
+    };
+    return levelColors[level] || levelColors.default;
+  };
+
+  return (
+    <div style={{ 
+      width: '100vw', 
+      height: '100vh', 
+      background: 'linear-gradient(to bottom, #000033, #000000)',
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative'
+    }}>
+      {/* 标题 */}
+      <div style={{ 
+        position: 'absolute', 
+        top: isMobile ? '10px' : '20px', 
+        left: isMobile ? '10px' : '20px', 
+        zIndex: 10, 
+        color: '#fff', 
+        fontSize: isMobile ? '16px' : isTablet ? '20px' : '24px', 
+        fontWeight: 'bold',
+        textShadow: '0 0 10px rgba(0, 255, 255, 0.8)'
+      }}>
+        中国文旅地球仪
+      </div>
+
+      {/* 2D地图容器 */}
+      <div style={{ 
+        flex: 1, 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        padding: isMobile ? '10px' : '20px'
+      }}>
+        {/* 中国地图背景 */}
+        <div style={{ 
+          width: isMobile ? '90%' : isTablet ? '80%' : '70%',
+          height: '80%',
+          background: 'url(https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=China map outline, simple, dark blue background, white border&image_size=landscape_16_9)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          position: 'relative',
+          borderRadius: '10px',
+          boxShadow: '0 0 20px rgba(0, 255, 255, 0.3)'
+        }}>
+          {/* 景区标记点 */}
+          {filteredSpots.map((spot) => {
+            // 简单的经纬度到2D坐标的转换（实际项目中需要更精确的映射）
+            const x = ((spot.longitude + 180) / 360) * 100;
+            const y = ((90 - spot.latitude) / 180) * 100;
+            const levelColor = getLevelColor(spot.level.name);
+
+            return (
+              <div 
+                key={spot.id}
+                style={{
+                  position: 'absolute',
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  cursor: 'pointer',
+                  zIndex: 5
+                }}
+                onClick={() => setSelectedSpot(spot)}
+              >
+                {/* 标记点 */}
+                <div style={{
+                  width: isMobile ? '10px' : '15px',
+                  height: isMobile ? '10px' : '15px',
+                  borderRadius: '50%',
+                  background: levelColor,
+                  boxShadow: `0 0 10px ${levelColor}`,
+                  border: '2px solid #fff'
+                }} />
+                {/* 名称标签 */}
+                {!isMobile && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-25px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    color: '#fff',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid rgba(0, 255, 255, 0.5)'
+                  }}>
+                    {spot.name}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 控制按钮 */}
+      <div style={{
+        position: 'absolute',
+        bottom: isMobile ? '10px' : '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'rgba(0, 0, 0, 0.8)',
+        border: '1px solid #00ffff',
+        borderRadius: '10px',
+        padding: isMobile ? '10px' : '15px',
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '10px' : '15px',
+        zIndex: 10
+      }}>
+        {/* 等级筛选 */}
+        <select 
+          value={selectedLevel}
+          onChange={(e) => setSelectedLevel(e.target.value)}
+          style={{
+            padding: isMobile ? '6px 12px' : '8px 16px',
+            background: 'rgba(0, 255, 255, 0.2)',
+            color: 'white',
+            border: '1px solid #00ffff',
+            borderRadius: '5px',
+            fontSize: isMobile ? '14px' : '16px'
+          }}
+        >
+          <option value="all">全部等级</option>
+          <option value="5A">5A级</option>
+          <option value="4A">4A级</option>
+          <option value="3A">3A级</option>
+        </select>
+
+        {/* 景区数量 */}
+        <div style={{
+          color: '#00ffff',
+          fontSize: isMobile ? '14px' : '16px',
+          display: 'flex',
+          alignItems: 'center'
+        }}>
+          景区数量: {filteredSpots.length}
+        </div>
+      </div>
+
+      {/* 选中景区的详细信息 */}
+      {selectedSpot && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(0, 0, 0, 0.9)',
+          border: '1px solid #00ffff',
+          borderRadius: '10px',
+          padding: isMobile ? '15px' : '20px',
+          color: 'white',
+          maxWidth: isMobile ? '90vw' : '600px',
+          maxHeight: isMobile ? '80vh' : '70vh',
+          overflowY: 'auto',
+          zIndex: 20,
+          boxShadow: '0 0 30px rgba(0, 255, 255, 0.5)'
+        }}>
+          <h2 style={{ 
+            margin: '0 0 10px 0', 
+            color: '#00ffff',
+            textShadow: '0 0 10px rgba(0, 255, 255, 0.8)',
+            fontSize: isMobile ? '18px' : '24px'
+          }}>
+            {selectedSpot.name}
+          </h2>
+          <p style={{ margin: '0 0 15px 0', fontSize: isMobile ? '14px' : '16px' }}>{selectedSpot.description}</p>
+          
+          {/* 图片展示 */}
+          {selectedSpot.images && selectedSpot.images.length > 0 && (
+            <div style={{ margin: isMobile ? '10px 0' : '15px 0' }}>
+              <div style={{ 
+                display: 'flex', 
+                overflowX: 'auto', 
+                gap: isMobile ? '5px' : '10px', 
+                padding: '10px 0'
+              }}>
+                {selectedSpot.images.map((image, index) => (
+                  <div key={index} style={{ flex: '0 0 auto', width: isMobile ? '100px' : '150px' }}>
+                    <img 
+                      src={image.url} 
+                      alt={image.description || selectedSpot.name} 
+                      style={{ 
+                        width: '100%', 
+                        height: isMobile ? '70px' : '100px', 
+                        borderRadius: '5px',
+                        border: '1px solid #00ffff'
+                      }} 
+                    />
+                    <p style={{ fontSize: isMobile ? '10px' : '12px', marginTop: '5px', marginBottom: '0' }}>
+                      {image.description || `图片 ${index + 1}`}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* 票价信息 */}
+          {selectedSpot.tickets && selectedSpot.tickets.length > 0 && (
+            <div style={{ margin: isMobile ? '10px 0' : '15px 0' }}>
+              <h3 style={{ color: '#00ffff', margin: '0 0 10px 0', fontSize: isMobile ? '16px' : '18px' }}>票价信息</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: isMobile ? '5px' : '10px' }}>
+                {selectedSpot.tickets.map((ticket, index) => (
+                  <div key={index} style={{ 
+                    background: 'rgba(0, 255, 255, 0.1)', 
+                    padding: isMobile ? '8px' : '10px', 
+                    borderRadius: '5px',
+                    border: '1px solid rgba(0, 255, 255, 0.3)'
+                  }}>
+                    <div style={{ fontWeight: 'bold', fontSize: isMobile ? '14px' : '16px' }}>{ticket.type}</div>
+                    <div style={{ fontSize: isMobile ? '14px' : '16px' }}>¥{ticket.price.toFixed(2)}</div>
+                    {ticket.description && (
+                      <div style={{ fontSize: isMobile ? '10px' : '12px', marginTop: '5px' }}>{ticket.description}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 基本信息 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: isMobile ? '10px' : '15px', margin: isMobile ? '10px 0' : '15px 0' }}>
+            <div style={{ fontSize: isMobile ? '14px' : '16px' }}>
+              <strong>等级:</strong> <span style={{ color: getLevelColor(selectedSpot.level.name) }}>{selectedSpot.level.name}</span>
+            </div>
+            <div style={{ fontSize: isMobile ? '14px' : '16px' }}>
+              <strong>地址:</strong> {selectedSpot.address}
+            </div>
+            {selectedSpot.officialWebsite && (
+              <div style={{ gridColumn: '1 / -1', fontSize: isMobile ? '14px' : '16px' }}>
+                <strong>官网:</strong> <a href={selectedSpot.officialWebsite} target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none', fontSize: isMobile ? '12px' : '14px' }}>{selectedSpot.officialWebsite}</a>
+              </div>
+            )}
+          </div>
+          
+          <button 
+            onClick={() => setSelectedSpot(null)}
+            style={{
+              marginTop: isMobile ? '10px' : '15px',
+              padding: isMobile ? '6px 12px' : '8px 16px',
+              background: '#ff4500',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: isMobile ? '14px' : '16px',
+              width: '100%'
+            }}
+          >
+            关闭
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
   const webGLSupported = isWebGLSupported();
+  const [scenicSpots, setScenicSpots] = React.useState([]);
+  const [selectedSpot, setSelectedSpot] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  if (!webGLSupported) {
+  // 加载模拟数据
+  React.useEffect(() => {
+    const loadMockData = async () => {
+      setIsLoading(true);
+      try {
+        // 模拟数据，参考百度高德花瓣地图风格
+        const mockData = [
+          {
+            id: 1,
+            name: '故宫',
+            description: '中国明清两代的皇家宫殿，世界上现存规模最大、保存最为完整的木质结构古建筑之一。',
+            latitude: 39.916345,
+            longitude: 116.397155,
+            level: { name: '5A' },
+            address: '北京市东城区景山前街4号',
+            officialWebsite: 'https://www.dpm.org.cn/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Forbidden City Beijing China, aerial view, beautiful architecture, cultural heritage&image_size=landscape_16_9', description: '故宫全景' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hall of Supreme Harmony Forbidden City, imperial palace, golden throne room&image_size=landscape_16_9', description: '太和殿' }
+            ],
+            tickets: [
+              { type: '成人票', price: 60.0, description: '旺季价格' },
+              { type: '学生票', price: 30.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 2,
+            name: '长城',
+            description: '中国古代的军事防御工程，是世界文化遗产之一。',
+            latitude: 40.431908,
+            longitude: 116.570374,
+            level: { name: '5A' },
+            address: '北京市怀柔区',
+            officialWebsite: 'https://www.badaling.gov.cn/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall of China Badaling section, winding through mountains, panoramic view&image_size=landscape_16_9', description: '长城全景' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Great Wall watchtower, ancient architecture, mountainous landscape&image_size=landscape_16_9', description: '长城烽火台' }
+            ],
+            tickets: [
+              { type: '成人票', price: 40.0, description: '八达岭长城' },
+              { type: '学生票', price: 20.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 3,
+            name: '西湖',
+            description: '中国浙江省杭州市的淡水湖，是中国大陆首批国家重点风景名胜区和中国十大风景名胜之一。',
+            latitude: 30.259163,
+            longitude: 120.148565,
+            level: { name: '5A' },
+            address: '浙江省杭州市西湖区',
+            officialWebsite: 'https://www.hangzhou.com.cn/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West Lake Hangzhou, panoramic view, traditional Chinese pavilion, bridge over water&image_size=landscape_16_9', description: '西湖全景' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Broken Bridge West Lake, snowy scenery, traditional architecture&image_size=landscape_16_9', description: '断桥残雪' }
+            ],
+            tickets: [
+              { type: '免费', price: 0.0, description: '西湖景区免费开放' }
+            ]
+          },
+          {
+            id: 4,
+            name: '黄山',
+            description: '中国安徽省南部的山脉，以奇松、怪石、云海、温泉、冬雪"五绝"著称于世。',
+            latitude: 30.133333,
+            longitude: 118.166667,
+            level: { name: '5A' },
+            address: '安徽省黄山市黄山区',
+            officialWebsite: 'https://www.huangshan.gov.cn/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan Mountain, sea of clouds, sunrise, granite peaks&image_size=landscape_16_9', description: '黄山云海' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Welcome Pine Huangshan, famous pine tree, mountainous landscape&image_size=landscape_16_9', description: '黄山迎客松' }
+            ],
+            tickets: [
+              { type: '成人票', price: 230.0, description: '旺季价格' },
+              { type: '学生票', price: 115.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 5,
+            name: '九寨沟',
+            description: '中国四川省阿坝藏族羌族自治州九寨沟县的自然保护区，以翠海、叠瀑、彩林、雪峰、藏情、蓝冰"六绝"著称。',
+            latitude: 33.266667,
+            longitude: 103.933333,
+            level: { name: '5A' },
+            address: '四川省阿坝藏族羌族自治州九寨沟县',
+            officialWebsite: 'https://www.jiuzhaigouvalley.com/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou Valley, colorful lakes, clear blue water, forested mountains&image_size=landscape_16_9', description: '九寨沟彩池' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou waterfalls, cascading water, rainbow, natural beauty&image_size=landscape_16_9', description: '九寨沟瀑布' }
+            ],
+            tickets: [
+              { type: '成人票', price: 220.0, description: '旺季价格' },
+              { type: '学生票', price: 110.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 6,
+            name: '桂林山水',
+            description: '广西壮族自治区桂林市的山水景观，以山青、水秀、洞奇、石美著称。',
+            latitude: 25.286106,
+            longitude: 110.298392,
+            level: { name: '5A' },
+            address: '广西壮族自治区桂林市',
+            officialWebsite: 'https://www.guilin-tour.com/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin山水, Li River, karst mountains, bamboo rafts, scenic landscape&image_size=landscape_16_9', description: '桂林山水' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Elephant Trunk Hill Guilin, iconic landmark, river view&image_size=landscape_16_9', description: '象鼻山' }
+            ],
+            tickets: [
+              { type: '成人票', price: 120.0, description: '漓江游船' },
+              { type: '学生票', price: 60.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 7,
+            name: '乐山大佛',
+            description: '四川省乐山市的巨型石刻佛像，是世界上最大的石刻佛像。',
+            latitude: 29.544633,
+            longitude: 103.779835,
+            level: { name: '5A' },
+            address: '四川省乐山市市中区凌云路2435号',
+            officialWebsite: 'https://www.leshan大佛.com/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Leshan Giant Buddha, massive stone statue, riverside, scenic view&image_size=landscape_16_9', description: '乐山大佛' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Leshan Buddha close-up, detailed carvings, religious significance&image_size=landscape_16_9', description: '大佛细节' }
+            ],
+            tickets: [
+              { type: '成人票', price: 90.0, description: '大佛景区' },
+              { type: '学生票', price: 45.0, description: '凭学生证购买' }
+            ]
+          },
+          {
+            id: 8,
+            name: '颐和园',
+            description: '北京市海淀区的皇家园林，是中国现存规模最大、保存最完整的皇家园林。',
+            latitude: 39.999973,
+            longitude: 116.275556,
+            level: { name: '5A' },
+            address: '北京市海淀区新建宫门路19号',
+            officialWebsite: 'https://www.summerpalace-china.com/',
+            images: [
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Summer Palace Beijing, imperial garden, lake, pavilions, traditional architecture&image_size=landscape_16_9', description: '颐和园全景' },
+              { url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Long Corridor Summer Palace, painted ceilings, traditional Chinese art&image_size=landscape_16_9', description: '长廊' }
+            ],
+            tickets: [
+              { type: '成人票', price: 30.0, description: '旺季价格' },
+              { type: '学生票', price: 15.0, description: '凭学生证购买' }
+            ]
+          }
+        ];
+
+        setScenicSpots(mockData);
+      } catch (error) {
+        console.error('Error loading mock data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadMockData();
+  }, []);
+
+  if (isLoading) {
     return (
       <div style={{ 
         width: '100vw', 
         height: '100vh', 
         background: 'linear-gradient(to bottom, #000033, #000000)',
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        color: '#fff',
-        padding: '20px'
+        color: '#fff'
       }}>
-        <h1 style={{ color: '#00ffff', textShadow: '0 0 10px rgba(0, 255, 255, 0.8)' }}>中国文旅地球仪</h1>
         <div style={{ 
           background: 'rgba(0, 0, 0, 0.8)', 
           border: '1px solid #00ffff', 
           borderRadius: '10px', 
-          padding: '20px', 
-          maxWidth: '600px',
-          textAlign: 'center'
+          padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}>
-          <h2 style={{ color: '#ff4500' }}>WebGL 支持检测</h2>
-          <p>很抱歉，您的浏览器或设备不支持 WebGL，无法显示 3D 地球仪效果。</p>
-          <p>请尝试使用以下浏览器：</p>
-          <ul style={{ listStyle: 'none', padding: 0, marginTop: '15px' }}>
-            <li>Google Chrome</li>
-            <li>Mozilla Firefox</li>
-            <li>Microsoft Edge</li>
-            <li>Safari</li>
-          </ul>
-          <p style={{ marginTop: '15px', fontSize: '14px', color: '#888' }}>
-            或者，请确保您的浏览器已启用 WebGL 功能。
-          </p>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            border: '4px solid #00ffff', 
+            borderTop: '4px solid transparent', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite'
+          }} />
+          <p style={{ marginTop: '15px', color: '#00ffff' }}>加载中...</p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </div>
     );
+  }
+
+  if (!webGLSupported) {
+    return <Map2D 
+      scenicSpots={scenicSpots} 
+      selectedSpot={selectedSpot} 
+      setSelectedSpot={setSelectedSpot} 
+      isMobile={isMobile} 
+      isTablet={isTablet} 
+      isDesktop={isDesktop} 
+    />;
   }
 
   return (
