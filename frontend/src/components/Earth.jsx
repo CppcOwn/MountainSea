@@ -24,13 +24,12 @@ const Earth = ({ isMobile, isTablet, isDesktop }) => {
   // 使用天气数据Hook
   const { weatherData, isWeatherLoading, fetchWeatherData } = useWeatherData();
 
-  // 加载地球纹理
-  const textureLoader = useLoader(THREE.TextureLoader);
   // 根据设备类型选择合适的纹理分辨率
   const textureResolution = isMobile ? '1024' : '2048';
-  const earthTexture = textureLoader.load(`https://threejs.org/examples/textures/land_ocean_ice_cloud_${textureResolution}.jpg`);
-  const bumpMap = textureLoader.load(`https://threejs.org/examples/textures/earth_bump.jpg`);
-  const specularMap = textureLoader.load(`https://threejs.org/examples/textures/earth_specular.jpg`);
+  // 加载地球纹理
+  const earthTexture = useLoader(THREE.TextureLoader, `https://threejs.org/examples/textures/land_ocean_ice_cloud_${textureResolution}.jpg`);
+  const bumpMap = useLoader(THREE.TextureLoader, `https://threejs.org/examples/textures/earth_bump.jpg`);
+  const specularMap = useLoader(THREE.TextureLoader, `https://threejs.org/examples/textures/earth_specular.jpg`);
 
   // 优化纹理加载
   useEffect(() => {
@@ -828,7 +827,58 @@ const Earth = ({ isMobile, isTablet, isDesktop }) => {
   );
 };
 
+// 检测WebGL支持
+const isWebGLSupported = () => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+  } catch (e) {
+    return false;
+  }
+};
+
 const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
+  const webGLSupported = isWebGLSupported();
+
+  if (!webGLSupported) {
+    return (
+      <div style={{ 
+        width: '100vw', 
+        height: '100vh', 
+        background: 'linear-gradient(to bottom, #000033, #000000)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#fff',
+        padding: '20px'
+      }}>
+        <h1 style={{ color: '#00ffff', textShadow: '0 0 10px rgba(0, 255, 255, 0.8)' }}>中国文旅地球仪</h1>
+        <div style={{ 
+          background: 'rgba(0, 0, 0, 0.8)', 
+          border: '1px solid #00ffff', 
+          borderRadius: '10px', 
+          padding: '20px', 
+          maxWidth: '600px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ color: '#ff4500' }}>WebGL 支持检测</h2>
+          <p>很抱歉，您的浏览器或设备不支持 WebGL，无法显示 3D 地球仪效果。</p>
+          <p>请尝试使用以下浏览器：</p>
+          <ul style={{ listStyle: 'none', padding: 0, marginTop: '15px' }}>
+            <li>Google Chrome</li>
+            <li>Mozilla Firefox</li>
+            <li>Microsoft Edge</li>
+            <li>Safari</li>
+          </ul>
+          <p style={{ marginTop: '15px', fontSize: '14px', color: '#888' }}>
+            或者，请确保您的浏览器已启用 WebGL 功能。
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(to bottom, #000033, #000000)' }}>
       <Canvas camera={{ position: [0, 0, isMobile ? 15 : 12] }}>
