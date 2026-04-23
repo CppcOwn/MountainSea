@@ -9,6 +9,7 @@ import { printPerformanceMetrics } from '../utils/performanceMonitor';
 import { fetchWithRetry, handleError, isOnline, listenNetworkStatus } from '../utils/errorHandler';
 import LazyImage from './LazyImage';
 import PointCloudMap from './PointCloudMap';
+import StarMap from './StarMap';
 
 const Earth = ({ isMobile, isTablet, isDesktop }) => {
   const [scenicSpots, setScenicSpots] = useState([]);
@@ -1155,7 +1156,7 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
   const [scenicSpots, setScenicSpots] = React.useState([]);
   const [selectedSpot, setSelectedSpot] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [mapMode, setMapMode] = React.useState('2d'); // '3d', '2d', 'point-cloud'
+  const [mapMode, setMapMode] = React.useState('2d'); // '3d', '2d', 'point-cloud', 'star-map'
 
   // 加载模拟数据
   React.useEffect(() => {
@@ -1422,11 +1423,37 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
       >
         点云地图
       </button>
+      <button
+        onClick={() => setMapMode('star-map')}
+        style={{
+          padding: isMobile ? '6px 12px' : '8px 16px',
+          background: mapMode === 'star-map' ? '#00ffff' : 'rgba(0, 255, 255, 0.2)',
+          color: mapMode === 'star-map' ? '#000' : '#fff',
+          border: '1px solid #00ffff',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: isMobile ? '12px' : '14px',
+          fontWeight: mapMode === 'star-map' ? 'bold' : 'normal'
+        }}
+      >
+        星图
+      </button>
     </div>
   );
 
   // 根据选择的地图模式渲染不同的地图
-  if (mapMode === 'point-cloud') {
+  if (mapMode === 'star-map') {
+    return (
+      <div style={{ position: 'relative' }}>
+        {renderMapModeControl()}
+        <StarMap 
+          isMobile={isMobile} 
+          isTablet={isTablet} 
+          isDesktop={isDesktop} 
+        />
+      </div>
+    );
+  } else if (mapMode === 'point-cloud') {
     return (
       <div style={{ position: 'relative' }}>
         {renderMapModeControl()}
