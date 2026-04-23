@@ -9,7 +9,7 @@ import { printPerformanceMetrics } from '../utils/performanceMonitor';
 import { fetchWithRetry, handleError, isOnline, listenNetworkStatus } from '../utils/errorHandler';
 import LazyImage from './LazyImage';
 import PointCloudMap from './PointCloudMap';
-import StarMap from './StarMap';
+import ProfessionalStarMap from './ProfessionalStarMap';
 
 const Earth = ({ isMobile, isTablet, isDesktop }) => {
   const [scenicSpots, setScenicSpots] = useState([]);
@@ -1436,7 +1436,7 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
           fontWeight: mapMode === 'star-map' ? 'bold' : 'normal'
         }}
       >
-        星图
+        专业星图
       </button>
     </div>
   );
@@ -1446,7 +1446,7 @@ const EarthContainer = ({ isMobile, isTablet, isDesktop }) => {
     return (
       <div style={{ position: 'relative' }}>
         {renderMapModeControl()}
-        <StarMap 
+        <ProfessionalStarMap 
           isMobile={isMobile} 
           isTablet={isTablet} 
           isDesktop={isDesktop} 
